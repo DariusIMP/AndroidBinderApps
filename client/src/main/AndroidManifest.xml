@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android1001.hamking.client">
+    package="com.example.binder.client">
 
     <queries>
-        <package android:name="com.android1001.hamking.server" />
+        <package android:name="com.example.binder.server" />
         <intent>
-            <action android:name="com.android1001.hamking.server.BIND_REMOTE" />
+            <action android:name="com.example.binder.server.BIND_REMOTE" />
         </intent>
     </queries>
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.HamKing">
@@ -24,9 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".PrepareOrderActivity"
-            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
