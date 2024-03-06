@@ -48,17 +48,20 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
         service?.let {
             mService = BinderMessageInterface.Stub.asInterface(service)
             var count = 0
+            var outerTimeNs = System.nanoTime()
             while (true) {
                 startTimestampNs = System.nanoTime()
-                val sarasa = mService!!.sendMsg("01234567")
+                val _reply = mService!!.sendMsg("01234567")
                 stopTimestampNs = System.nanoTime()
                 measurements.add(stopTimestampNs - startTimestampNs)
                 count++
-                if (count == 100) {
+                if (count == 1000) {
                     val avg = String.format("%.3f", measurements.average() / 1_000_000)
-                    Log.i(TAG, "Ping = $avg ms")
+                    val measAmount = String.format("%.3f", count / ((stopTimestampNs - outerTimeNs).toDouble() / 1_000_000_000))
+                    Log.i(TAG, "Ping = $avg ms | Throughput: $measAmount msgs/sec")
                     measurements = mutableListOf()
                     count = 0
+                    outerTimeNs = System.nanoTime()
                 }
             }
         }
