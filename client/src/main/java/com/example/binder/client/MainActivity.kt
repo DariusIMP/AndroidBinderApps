@@ -7,14 +7,22 @@ import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.widget.TextView
 import com.example.binder.api.*
 
 class MainActivity : AppCompatActivity(), ServiceConnection {
 
+    companion object {
+        private val TAG = MainActivity::javaClass.name
+    }
+
     private var mService: BinderMessageInterface? = null
 
     private lateinit var textView: TextView
+
+    private var startTimestampNs: Long = 0
+    private var stopTimestampNs: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +43,23 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
 
     override fun onServiceConnected(name: ComponentName, service: IBinder?) {
         textView.append("Sending measurements...\n")
+        var measurements = mutableListOf<Long>()
+
         service?.let {
             mService = BinderMessageInterface.Stub.asInterface(service)
+            var count = 0
             while (true) {
-                mService!!.sendMsg(Message().apply { mPayload = "01234567" })
+                startTimestampNs = System.nanoTime()
+                val sarasa = mService!!.sendMsg("01234567")
+                stopTimestampNs = System.nanoTime()
+                measurements.add(stopTimestampNs - startTimestampNs)
+                count++
+                if (count == 100) {
+                    val avg = String.format("%.3f", measurements.average() / 1_000_000)
+                    Log.i(TAG, "Ping = $avg ms")
+                    measurements = mutableListOf()
+                    count = 0
+                }
             }
         }
     }

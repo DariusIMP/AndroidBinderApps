@@ -74,8 +74,9 @@ class MessageService : Service() {
     inner class RemoteService : BinderMessageInterface.Stub() {
 
         @BinderThread
-        override fun sendMsg(message: Message) {
+        override fun sendMsg(message: String): String {
             listener()
+            return "Test"
         }
     }
 
